@@ -4,7 +4,7 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-	Object first_and_only;
+	Object obj;
 
 	const uint16_t imgWidth = 800;
 	const uint16_t imgHeight = 600;
@@ -12,8 +12,8 @@ int main(int argc, char* argv[]) {
 	JiMP2::BMP bmp(imgWidth, imgHeight);
 	try
 	{
-	    first_and_only.read_file("cow.obj", imgWidth, imgHeight);
-        first_and_only.draw_object(bmp, 255, 0, 0, imgHeight);
+	    obj.read_file("cow.obj", imgWidth, imgHeight);
+       obj.draw_object(bmp, 255, 0, 0, imgHeight);
 
         ofstream outfile("test.bmp", ofstream::binary);
         outfile << bmp;
@@ -22,43 +22,38 @@ int main(int argc, char* argv[]) {
 	{
 	    exc->print_exception();
 	}
+	
+    All_transformations AT;
+    
+	Rotate_X *t=new Rotate_X(45, obj.get_center_x(), obj.get_center_y(), obj.get_center_z());
+    AT.Add_transformation(t);
 
-	/*first_and_only.transform(120,100,0);
-	JiMP2::BMP bmp2(imgWidth, imgHeight);
-	first_and_only.draw_object(bmp2, 200, 100, 100, imgHeight);
-	ofstream outfile2("after.bmp", ofstream::binary);
-	outfile2 << bmp2;
-	//first_and_only.show();*/
+    Rotate_Y *t2=new Rotate_Y(45, obj.get_center_x(), obj.get_center_y(), obj.get_center_z());
+    AT.Add_transformation(t2);
 
-	/*first_and_only.scale(1.5,1.5,1.5);
-	JiMP2::BMP bmp3(imgWidth, imgHeight);
-	first_and_only.draw_object(bmp3, 100, 50, 50, imgHeight);
-	ofstream outfile3("after_scaling.bmp", ofstream::binary);
-	outfile3 << bmp3;*/
-
-	first_and_only.rotate_X(45);
-	JiMP2::BMP bmp4(imgWidth, imgHeight);
-	first_and_only.draw_object(bmp4, 100, 50, 50, imgHeight);
-	ofstream outfile4("after_rotatingX.bmp", ofstream::binary);
-	outfile4 << bmp4;
-	//first_and_only.show();
-	cout<<endl<<endl<<"<------------------------------------->\n";
-
-        first_and_only.rotate_Y(45);
-	JiMP2::BMP bmp5(imgWidth, imgHeight);
-	first_and_only.draw_object(bmp5, 100, 50, 50, imgHeight);
-	ofstream outfile5("after_rotatingY.bmp", ofstream::binary);
-	outfile5 << bmp5;
-	//first_and_only.show();
-	cout<<endl<<endl<<"<------------------------------------->\n";
-
-	/*first_and_only.rotate_Z(45);
-	JiMP2::BMP bmp6(imgWidth, imgHeight);
-	first_and_only.draw_object(bmp6, 100, 50, 50, imgHeight);
-	ofstream outfile6("after_rotatingZ.bmp", ofstream::binary);
-	outfile6 << bmp6;
-        first_and_only.show();
-	cout<<endl<<endl<<"<------------------------------------->\n";*/
+	Rotate_Z *t3=new Rotate_Z(45, obj.get_center_x(), obj.get_center_y(), obj.get_center_z());
+    AT.Add_transformation(t3);
+	
+	Translate *t4= new Translate(-50,100,0);
+    AT.Add_transformation(t4);
+	
+	Scale *t5=new Scale(1.2, 0.8, 2, obj.get_center_x(), obj.get_center_y(), obj.get_center_z());
+    AT.Add_transformation(t5);
+    
+    Scale exchange(0.8,0.5,1.5, obj.get_center_x(), obj.get_center_y(), obj.get_center_z());
+    AT[5]=exchange;
+	
+	obj.make_transformation(AT);
+	JiMP2::BMP bmp7(imgWidth, imgHeight);
+	obj.draw_object(bmp7, 20,20,20, imgHeight);
+	ofstream outfile7("final.bmp", ofstream::binary);
+	outfile7<<bmp7;
+	
+	obj.make_reverse_transformation(AT);
+	JiMP2::BMP bmp8(imgWidth, imgHeight);
+	obj.draw_object(bmp8, 200, 0, 200, imgHeight);
+	ofstream outfile8("reversed.bmp", ofstream::binary);
+	outfile8<<bmp8;
 
 	return 0;
 }

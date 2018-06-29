@@ -184,7 +184,7 @@ Matrix& Matrix::operator=(const Matrix &mat)
     {
         delete [] tab[i];
     }
-    delete [] *tab;
+    delete [] tab;
 
     m = mat.m;
     n = mat.n;

@@ -245,9 +245,9 @@ void Object::read_file(const char* file_name, const uint16_t& img_width, const u
     }
     start_x=scalar*min_x*(-1);
     start_y=scalar*min_y*(-1);
-    center_x=(max_x-min_x)/2*scalar;
-    center_y=(max_y-min_y)/2*scalar;
-    center_z=(max_z-min_z)/2*scalar;
+    center_x=(max_x-min_x)/2;
+    center_y=(max_y-min_y)/2;
+    center_z=(max_z-min_z)/2;
 }
 
 Object::~Object()
@@ -277,53 +277,23 @@ void Object::show()const
     }
 }
 
-void Object::transform(const double &x, const double &y, const double &z)
+void Object::make_transformation(All_transformations& AT)
 {
-    for(std::vector<Vertex>::iterator it=tabv.begin(); it != tabv.end(); ++it)
-    {
-        Translate_point t(vertex_to_matrix(*it), x, y, z);
-	*it=matrix_to_vertex(t.transformation());
-    }
-    center_x+=x;
-    center_y-=y;
-    center_z+=z;
+    AT.Create_transformation();
+    for(vector<Vertex>::iterator it=tabv.begin(); it!=tabv.end(); ++it)
+		*it=matrix_to_vertex(AT*vertex_to_matrix(*it));
 }
 
-void Object::scale(const double &s_x, const double &s_y, const double &s_z)
+void Object::make_reverse_transformation(All_transformations& AT)
 {
-    for(std::vector<Vertex>::iterator it=tabv.begin(); it!= tabv.end(); ++it)
-    {
-        Scale_point t(vertex_to_matrix(*it), s_x, s_y, s_z, center_x, center_y, center_z);
-        *it=matrix_to_vertex(t.transformation());
-    }
+    AT.Create_reverse_transformation();
+    for(vector<Vertex>::iterator it=tabv.begin(); it!=tabv.end(); ++it)
+		*it=matrix_to_vertex(AT*vertex_to_matrix(*it));
 }
 
-void Object::rotate_X(const double &angle)
-{
-    for(std::vector<Vertex>::iterator it=tabv.begin(); it!= tabv.end(); ++it)
-    {
-        Rotate_point_X t(vertex_to_matrix(*it), angle, center_x, center_y, center_z);
-        *it=matrix_to_vertex(t.transformation());
-    }
-}
-
-void Object::rotate_Y(const double &angle)
-{
-    for(std::vector<Vertex>::iterator it=tabv.begin(); it!= tabv.end(); ++it)
-    {
-        Rotate_point_Y t(vertex_to_matrix(*it), angle, center_x, center_y, center_z);
-        *it=matrix_to_vertex(t.transformation());
-    }
-}
-
-void Object::rotate_Z(const double &angle)
-{
-    for(std::vector<Vertex>::iterator it=tabv.begin(); it!= tabv.end(); ++it)
-    {
-        Rotate_point_Z t(vertex_to_matrix(*it), angle, center_x, center_y, center_z);
-        *it=matrix_to_vertex(t.transformation());
-    }
-}
+double Object::get_center_x() {return center_x;}
+double Object::get_center_y() {return center_y;}
+double Object::get_center_z() {return center_z;}
 
 Matrix vertex_to_matrix(const Vertex& ver)
 {
@@ -334,6 +304,7 @@ Matrix vertex_to_matrix(const Vertex& ver)
     B.set_el(4,1,1);
     return B;
 }
+
 Vertex matrix_to_vertex(Matrix mat)
 {
     Vertex ver;

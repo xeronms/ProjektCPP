@@ -30,11 +30,12 @@ public:
     void read_file(const char* file_name, const uint16_t& img_width, const uint16_t& img_height);
     void draw_object(JiMP2::BMP &bmp, unsigned char r, unsigned char g, unsigned char b, const uint16_t& height)const;
     void show()const;
-    void transform(const double &x, const double &y, const double &z);
-    void scale(const double &s_x, const double &s_y, const double &s_z);
-    void rotate_X(const double &angle);
-    void rotate_Y(const double &angle);
-    void rotate_Z(const double &angle);
+    void make_transformation(All_transformations& AT);
+    void make_reverse_transformation(All_transformations& AT);
+    double get_center_x();
+    double get_center_y();
+    double get_center_z();
+    void edit_center_point();
     ~Object();
 };
 
