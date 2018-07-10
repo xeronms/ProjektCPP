@@ -77,4 +77,14 @@ public:
         napis="Nie wolno dzielic przez 0";
     }
 };
+
+class Exception_transformation
+{
+public:
+    string napis;
+    Exception_transformation()
+    {
+        napis="Nie ma takiego elementu\n";
+    }
+};
 #endif // EXCEPTIONS_H

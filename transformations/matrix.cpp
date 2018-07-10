@@ -180,6 +180,8 @@ bool Matrix::operator!=(const Matrix &mat)
 
 Matrix& Matrix::operator=(const Matrix &mat)
 {
+	if(this==&mat) return *this;
+	
     for(int i=0; i<m; ++i)
     {
         delete [] tab[i];

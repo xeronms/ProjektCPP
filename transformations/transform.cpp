@@ -11,6 +11,12 @@ Transformation& Transformation::operator=(const Transformation& other)
 	return *this;
 }
 
+Transformation& Transformation::operator[](unsigned index)
+{
+    if(index!=0) throw Exception_transformation();
+    return *this;
+}
+
 Transformation::~Transformation(){}
 
 Matrix Transformation::operator*(const Matrix &point)
@@ -24,6 +30,16 @@ Transformation::operator Matrix()
 }
 
 Matrix Transformation::return_rA(){return rA;}
+
+void Transformation::Create_transformation()
+{
+	return;
+}
+
+void Transformation::Create_reverse_transformation()
+{
+	return;
+}
 
 Translate::Translate(const double &trans_x, const double &trans_y, const double &trans_z)
 {
@@ -129,8 +145,27 @@ void All_transformations::Add_transformation(Transformation* t)
     trans.push_back(t);
 }
 
+Transformation& All_transformations::operator[](unsigned index)
+{
+    auto it=trans.begin();
+    for(unsigned i=0; i<index; ++i, ++it){}
+    	return *(*it);
+}
+
+All_transformations& All_transformations::operator=(const All_transformations& other)
+{
+	A=other.A;
+	rA=other.rA;
+	trans.clear();
+	for(auto it=other.trans.begin(); it!=other.trans.end(); ++it)
+		trans.push_back(*it);
+}
+
 void All_transformations::Create_transformation()
 {
+    for(auto it=trans.begin(); it!=trans.end(); ++it)
+    	(*it)->Create_transformation();
+
     for(int i=1; i<=4; ++i)
     {
 		for (int j=1; j<=4; ++j)
@@ -139,33 +174,25 @@ void All_transformations::Create_transformation()
 			else A.set_el(i,j,0);
 		}
     }
-    for(list<Transformation*>::iterator it=trans.begin(); it!=trans.end(); ++it)
-	A=A*(**it);
+    
+    for(auto it=trans.begin(); it!=trans.end(); ++it)
+		A=A*(**it);
 }
 
 void All_transformations::Create_reverse_transformation()
 {
+	for(auto it=trans.rbegin(); it!=trans.rend(); ++it)
+		(*it)->Create_reverse_transformation();
+	
     for(int i=1; i<=4; ++i)
     {
 		for (int j=1; j<=4; ++j)
 		{
-			if(i==j) A.set_el(i,j,1);
-			else A.set_el(i,j,0);
+			if(i==j) rA.set_el(i,j,1);
+			else rA.set_el(i,j,0);
 		}
     }
+    
     for(auto it=trans.rbegin(); it!=trans.rend(); ++it)
-		A=A*((*it)->return_rA());
-}
-
-Transformation& All_transformations::operator[](unsigned index)
-{
-    auto it=trans.begin();
-    for(unsigned i=1; i<index; ++i, ++it){}
-    	return *(*it);
-}
-
-All_transformations::~All_transformations()
-{
-    for(list<Transformation*>::iterator it=trans.begin(); it!=trans.end(); ++it)
-		delete *it;
+		rA=rA*((*it)->return_rA());
 }

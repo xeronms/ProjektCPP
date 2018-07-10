@@ -32,10 +32,10 @@ public:
     void show()const;
     void make_transformation(All_transformations& AT);
     void make_reverse_transformation(All_transformations& AT);
-    double get_center_x();
-    double get_center_y();
-    double get_center_z();
-    void edit_center_point();
+    double get_center_x()const;
+    double get_center_y()const;
+    double get_center_z()const;
+    void edit_center_point(double x, double y, double z);
     ~Object();
 };
 

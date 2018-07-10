@@ -288,12 +288,19 @@ void Object::make_reverse_transformation(All_transformations& AT)
 {
     AT.Create_reverse_transformation();
     for(vector<Vertex>::iterator it=tabv.begin(); it!=tabv.end(); ++it)
-		*it=matrix_to_vertex(AT*vertex_to_matrix(*it));
+		*it=matrix_to_vertex(AT.return_rA()*vertex_to_matrix(*it));
 }
 
-double Object::get_center_x() {return center_x;}
-double Object::get_center_y() {return center_y;}
-double Object::get_center_z() {return center_z;}
+double Object::get_center_x()const {return center_x;}
+double Object::get_center_y()const {return center_y;}
+double Object::get_center_z()const {return center_z;}
+
+void Object::edit_center_point(double x, double y, double z)
+{
+	center_x+=x;
+	center_y+=y;
+	center_z+=z;
+}
 
 Matrix vertex_to_matrix(const Vertex& ver)
 {
